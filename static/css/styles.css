@@ -1,0 +1,23 @@
+body {
+    font-family: sans-serif;
+    text-align: center;
+    line-height: 2em;
+    margin-bottom: 100px;
+    margin-right: 150px;
+    margin-left: 150px;
+}
+
+#header {
+    background-color: aquamarine;
+    padding-bottom: 50px;
+    padding-top: 50px;
+}
+
+#table {
+    padding-bottom: 50px;
+    padding-top: 50px;
+}
+
+#update {
+    padding-top: 50px;
+}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Task Manager</title>
+{% endblock %}
+
+{% block body %}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <div class="container-fluid" id="header">
+        <h1>Task Manager - {{ username.username }}</h1>
+        <h4>Keep track of your daily tasks</h4>
+    </div>
+    <div class="container-fluid" id="table">
+        {% if tasks %}
+            <table class="table table-hover table-sm">
+                <caption>List of tasks</caption>
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Task</th>
+                        <th scope="col">Added</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.content }}</td>
+                        <td>{{ task.date_created.date() }}</td>
+                        <td>
+                            <a href="/delete/{{ task.id }}">Delete</a> | <a href="/update/{{ task.id }}">Update</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+                
+        {% else %}
+            <h1>Looks like you don't have any pending tasks :)</h1>
+            <h3>Add task below.</h3>
+        {% endif %}
+    </div>
+    <div class="container-fluid">
+        <form action="/" method="POST">
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Add a New Task:</label>
+                <input type="text" name="content" id="exampleInputEmail1" class="form-control" autofocus placeholder="Task" aria-describedby="emailHelp">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Task</button>
+        </form>
+    </div>
+{% endblock %}

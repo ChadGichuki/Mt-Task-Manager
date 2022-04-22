@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Update task</title>
+
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid" id="header">
+        <h1>Update Task</h1>
+        <h4>Has this task changed?<h4>
+    </div>
+    <div class="container-fluid" id="update">
+        <form action="/update/{{ task.id }}" method="POST">
+            <div class="mb-3">
+                <input type="text" name="content" class="form-control" autofocus value="{{ task.content }}">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Task</button>
+        </form>
+    </div>
+{% endblock %}

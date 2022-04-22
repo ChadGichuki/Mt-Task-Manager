@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Register</title>
+{% endblock %}
+
+{% block body %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <div class="container-fluid" id="header">
+        <h1>Welcome to Task Manager</h1>
+        <h4>Enter your details to register<h4>
+    </div>
+    <div class="container-fluid">
+        <form action="/register" method="POST">
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Username:</label>
+                <input type="text" name="username" id="exampleInputEmail1" class="form-control" autofocus placeholder="Username" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Password:</label>
+                <input type="password" name="password" id="exampleInputEmail1" class="form-control" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Re-Enter Password:</label>
+                <input type="password" name="confirmation" id="exampleInputEmail1" class="form-control" aria-describedby="emailHelp">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+{% endblock %}
