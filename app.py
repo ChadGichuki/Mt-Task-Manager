@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from datetime import timedelta
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.sql import select
-from functions import login_required
+from functions import login_required, get_quote
 
 app = Flask(__name__)
 app.secret_key = "tttggghhh"
@@ -21,6 +21,7 @@ class Users(db.Model):
     username = db.Column(db.String(200), nullable=False)
     hash = db.Column(db.String, nullable=False)
     tasks = db.relationship('Todo', backref='user')
+    archives = db.relationship('Archives', backref='user')
 
     @property
     def password(self):
@@ -44,11 +45,22 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     content = db.Column(db.String(200), nullable=False)
-    completed = db.Column(db.Integer, default=0)
-    date_created = db.Column(db.DateTime, default=datetime.now())
+    deadline = db.Column(db.String(100))
+    date_added = db.Column(db.DateTime, default=datetime.now())
 
     def __repr__(self):
         return '<Task %r>' % self.id
+
+
+class Archives(db.Model):
+    """A table to store all completed tasks for each user)"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    content = db.Column(db.String(200), nullable=False)
+    date_completed = db.Column(db.DateTime, default=datetime.now())
+
+    def __repr__(self):
+        return '<Archive %r>' % self.id
 
 
 class UsersEncoder(json.JSONEncoder):
@@ -75,21 +87,25 @@ def index():
         # Query database for all the tasks of the current user
         user = current_user_id
         tasks = Todo.query.order_by(
-            Todo.date_created).filter(Todo.user_id == user).all()
+            Todo.date_added).filter(Todo.user_id == user).all()
 
         return render_template("index.html", tasks=tasks, username=username)
 
     else:
         # Get the data from the form
         task = request.form.get('content')
+        due_date = request.form.get('deadline')
 
         # Check for errors
         if not task:
             flash("Please enter a task", "warning")
+        if not due_date:
+            flash("Please enter a date for task completion", "warning")
 
         # Add new task to database
         user = current_user_id
-        new_task = Todo(content=task, user_id=current_user_id)
+        new_task = Todo(content=task, user_id=user,
+                        deadline=due_date)
 
         try:
             db.session.add(new_task)
@@ -143,6 +159,58 @@ def update(id):
                 return "Could not update task"
 
 
+@app.route("/archive/<int:id>")
+@login_required
+def archive(id):
+    """Remove the task from Todo and add to archived db"""
+    task_to_archive = Todo.query.get_or_404(id)
+
+    # Ensure user can only archive tasks fromt their account
+    current_user_id = session["user_id"]
+    if current_user_id == task_to_archive.user_id:
+
+        # Add to archives database
+        new_archive = Archives(user_id=current_user_id,
+                               content=task_to_archive.content)
+
+        try:
+            db.session.add(new_archive)
+            db.session.commit()
+
+            # Delete from Todo database
+            db.session.delete(task_to_archive)
+            db.session.commit()
+
+            flash("Congratulations! Task completed & archived")
+            return redirect("/archives")
+        except:
+            flash("Could not archive task!")
+            return redirect("/")
+
+
+@app.route("/archives")
+@login_required
+def archives():
+    """Displays all the archived tasks of current user"""
+    current_user_id = session["user_id"]
+
+    # Get archived tasks to current user
+    archived_tasks = Archives.query.order_by(Archives.date_completed).filter(
+        Archives.user_id == current_user_id).all()
+
+    return render_template("archives.html", tasks=archived_tasks)
+
+
+@app.route("/motivation")
+@login_required
+def motivation():
+    """Displays a motivational quote from API"""
+    # Get quote from API call
+    quote = get_quote()
+
+    return render_template("motivation.html", quote=quote)
+
+
 @app.route("/login", methods=['POST', 'GET'])
 def login():
     """Allow existing users to login"""
@@ -163,7 +231,7 @@ def login():
             return redirect("/login")
 
         # Check if the 2 fields match a user on the database
-        user = Users.query.filter_by(username=username).first()
+        user = Users.query.filter(Users.username == username).first()
 
         if not user or not user.verify_password(password):
             flash("Sorry, Invalid username or password!")
@@ -226,5 +294,4 @@ def register():
 
 
 if __name__ == "__main__":
-    db.create_all()
     app.run(debug=True)

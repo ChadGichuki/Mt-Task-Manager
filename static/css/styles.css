@@ -1,5 +1,5 @@
 body {
-    font-family: sans-serif;
+    font-family: 'Lucida Sans Typewriter';
     text-align: center;
     line-height: 2em;
     margin-bottom: 100px;
@@ -20,4 +20,9 @@ body {
 
 #update {
     padding-top: 50px;
+}
+
+#my-nav {
+    margin-right: -150px;
+    margin-left: -150px;
 }

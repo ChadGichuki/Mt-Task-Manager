@@ -24,6 +24,7 @@
                     <tr>
                         <th scope="col">Task</th>
                         <th scope="col">Added</th>
+                        <th scope="col">Deadline</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -31,9 +32,10 @@
                     {% for task in tasks %}
                     <tr>
                         <td>{{ task.content }}</td>
-                        <td>{{ task.date_created.date() }}</td>
+                        <td>{{ task.date_added.date() }}</td>
+                        <td>{{ task.deadline }}</td>
                         <td>
-                            <a href="/delete/{{ task.id }}">Delete</a> | <a href="/update/{{ task.id }}">Update</a>
+                            <a href="/delete/{{ task.id }}">Delete</a> | <a href="/update/{{ task.id }}">Update</a> | <a href="/archive/{{ task.id }}">Completed</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -50,6 +52,9 @@
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Add a New Task:</label>
                 <input type="text" name="content" id="exampleInputEmail1" class="form-control" autofocus placeholder="Task" aria-describedby="emailHelp">
+                <br>
+                <label for="deadline">Task to be completed by:</label>
+                <input type="date" id="deadline" name="deadline"> 
             </div>
 
             <button type="submit" class="btn btn-primary">Add Task</button>

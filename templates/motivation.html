@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block head %} 
+<title>Motivation</title> 
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            Your Daily Dose of Motivation
+        </div>
+        <img src="/static/images/photo.jpg" class="card-img-top" alt="Inspiring quote" style="width:1250px;height:350px;">
+        <div class="card-body">
+          <h5 class="card-title">{{ quote["body"] }}</h5>
+          <p class="card-text">{{ quote["author"] }}</p>
+          <br>
+          <p class="card-text">{{ quote["vendor"] }}</p>
+          <a href="/" class="btn btn-primary">Add Tasks</a>
+        </div>
+      </div>
+      <div class="card-footer text-muted">
+        Complete your tasks today!
+        <br>
+        Photo by <a href="https://unsplash.com/@randytarampi?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Randy Tarampi</a> on <a href="https://unsplash.com/s/photos/motivation?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+      </div>
+</div>
+{% endblock  %}
