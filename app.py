@@ -9,7 +9,7 @@ from functions import login_required, get_quote
 
 app = Flask(__name__)
 app.secret_key = "tttggghhh"
-app.permanent_session_lifetime = timedelta(minutes=10)
+app.permanent_session_lifetime = timedelta(days=1)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -241,7 +241,7 @@ def login():
         session["user_id"] = user.id
         session.permanent = True
         flash("You are Logged In!")
-        return redirect("/")
+        return redirect("/motivation")
     else:
         return render_template("login.html")
 
@@ -290,7 +290,7 @@ def register():
             return redirect("/register")
 
         session["user_id"] = new_user.id
-        return redirect("/")
+        return redirect("/motivation")
 
 
 if __name__ == "__main__":
